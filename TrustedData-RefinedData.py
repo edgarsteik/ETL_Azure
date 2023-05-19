@@ -3,37 +3,22 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 from pyspark.sql.functions import *
 
-# COMMAND ----------
+####Conexión al Data Lake
 
-# MAGIC %md
-# MAGIC ####Conexión al Data Lake
-
-# COMMAND ----------
 
 clave = 'Ldr/3SzOCA6Pss7IPcHViadAP62GNwa7rO34egvAR/oWgIvbttUeH8/hp80EjPIrg/5KISh10PIr+AStMPRzGw=='
 spark.conf.set("fs.azure.account.key.formacionanalitica.dfs.core.windows.net", clave)
 container = 'edgar-steik-integrador'
 datalake = 'formacionanalitica'
 
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ####PATHS a raw y trusted
-
-# COMMAND ----------
+####PATHS a raw y trusted
 
 raw_data = f"abfss://{container}@{datalake}.dfs.core.windows.net/Integrador/raw_data"
 
-# COMMAND ----------
 
 trusted = f"abfss://{container}@{datalake}.dfs.core.windows.net/trusted"
 
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC #### PATHS a las tablas de interés
-
-# COMMAND ----------
+#### PATHS a las tablas de interés
 
 racesPATH = trusted + "/races_df/"
 constructorsPATH = trusted + "/constructors_df/"
@@ -56,13 +41,8 @@ circuits.createOrReplaceTempView("circuits")
 results.createOrReplaceTempView("results")
 status.createOrReplaceTempView("status")
 
-# COMMAND ----------
+#### JOIN de tablas de interés
 
-# MAGIC %md
-# MAGIC
-# MAGIC #### JOIN de tablas de interés
-
-# COMMAND ----------
 
 tablon_formula_1 = spark.sql("""
 SELECT * 
@@ -74,16 +54,11 @@ LEFT JOIN circuits on circuits.cir_circuitId = races.races_circuitId
 WHERE races.races_year > 2017
 """)
 
-# COMMAND ----------
 
 tablon_formula_1.display()
 
-# COMMAND ----------
+#### Conexión JDBC
 
-# MAGIC %md
-# MAGIC #### Conexión JDBC
-
-# COMMAND ----------
 
 jdbcHostname = "integrador.database.windows.net"
 jdbcPort = 1433
@@ -99,13 +74,8 @@ connectionProperties = {
 }
 jdbcUrl = "jdbc:sqlserver://{0}:{1};database={2};user={3}@integrador;password={4};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;".format(jdbcHostname, jdbcPort, jdbcDatabase, jdbcUsername, jdbcPassword)
 
-# COMMAND ----------
+#### Guardado del tablón
 
-# MAGIC %md
-# MAGIC
-# MAGIC #### Guardado del tablón
-
-# COMMAND ----------
 
 tablon_formula_1.write.mode("overwrite")\
 .format("jdbc")\
@@ -114,5 +84,4 @@ tablon_formula_1.write.mode("overwrite")\
 .option("dbtable", "dbo.Formula1_Edgar")\
 .save()
 
-# COMMAND ----------
 
