@@ -1,4 +1,4 @@
-#### Proceso de ELT en Azure
+#Proceso de ELT en Azure
 
 **Presentación del caso:**
 
