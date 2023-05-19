@@ -5,8 +5,9 @@ from pyspark.sql.functions import *
 
 ####Conexión al Data Lake
 
+# Borrado de claves por seguridad
 
-clave = 'Ldr/3SzOCA6Pss7IPcHViadAP62GNwa7rO34egvAR/oWgIvbttUeH8/hp80EjPIrg/5KISh10PIr+AStMPRzGw=='
+clave = '*********************************************************************************************'
 spark.conf.set("fs.azure.account.key.formacionanalitica.dfs.core.windows.net", clave)
 container = 'edgar-steik-integrador'
 datalake = 'formacionanalitica'
